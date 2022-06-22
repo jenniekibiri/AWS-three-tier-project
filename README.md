@@ -52,7 +52,7 @@ use ```aws configure``` to set the variables in aws config file is the best way 
 
 
 
-<!-- # resource "aws_route_table" "myapp-route-table" {
+# resource "aws_route_table" "myapp-route-table" {
 #   #which VPC this route table belongs to
 #   vpc_id=aws_vpc.myapp-vpc.id
 #   route {
@@ -70,4 +70,4 @@ use ```aws configure``` to set the variables in aws config file is the best way 
 #   subnet_id = aws_subnet.myapp-subnet-1.id
 #   route_table_id = aws_route_table.myapp-route-table.id
   
-# } -->
+# }
