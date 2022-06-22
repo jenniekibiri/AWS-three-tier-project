@@ -12,7 +12,7 @@ variable "web_subnet1_cidr_block" {}
 variable "web_subnet2_cidr_block" {}
 variable "instance_type" {}
 variable "public_key_location" {}
-
+variable "jenkins_server" {}
 
 
 
@@ -115,7 +115,7 @@ resource "aws_instance" "web-server-1" {
   availability_zone           = var.avail_zone1
   key_name                    = aws_key_pair.ssh-key.key_name
   associate_public_ip_address = true
-  user_data = <<EOF
+  user_data                   = <<EOF
 #!/bin/bash
 sudo yum update -y && sudo yum install -y docker
 sudo systemctl start docker 
@@ -137,8 +137,9 @@ resource "aws_instance" "web-server-2" {
   subnet_id                   = aws_subnet.web-subnet-2.id
   availability_zone           = var.avail_zone2
   key_name                    = aws_key_pair.ssh-key.key_name
+  vpc_security_group_ids      = [aws_security_group.web-sg.id]
   associate_public_ip_address = true
-  user_data = <<EOF
+  user_data                   = <<EOF
 #!/bin/bash
 sudo yum update -y && sudo yum install -y docker
 sudo systemctl start docker 
@@ -153,3 +154,76 @@ EOF
 output "web-server2-public-ip" {
   value = aws_instance.web-server-2.public_ip
 }
+
+
+//web server security group
+resource "aws_security_group" "web-sg" {
+  name        = "web-sg"
+  vpc_id      = aws_vpc.shecodesafrica_vpc.id
+  description = "Web server security group"
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.my_ip, var.jenkins_server]
+  }
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port       = "0"
+    to_port         = "0"
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+    prefix_list_ids = []
+  }
+  tags = {
+    Name = "${var.env_prefix}-shecodes-web-sg"
+  }
+}
+
+
+# Create Web Server Security Group
+resource "aws_security_group" "webserver-sg" {
+  name        = "Webserver-SG"
+  description = "Allow inbound traffic from ALB"
+  vpc_id      = aws_vpc.shecodesafrica_vpc.id
+
+  ingress {
+    description     = "Allow traffic from web layer"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.web-sg.id]
+  }
+
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.env_prefix}-shecodes-webserver-sg"
+  }
+}
+
+
