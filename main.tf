@@ -529,3 +529,6 @@ resource "aws_lb_listener" "internal-elb" {
   }
 }
 
+ 
+# Database Tier
+
