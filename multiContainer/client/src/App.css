@@ -1,0 +1,16 @@
+.card{
+  width: 20rem;
+  margin: 1rem;
+}
+.main{
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10%;
+}
+
+.image{
+  width: 100%;
+}

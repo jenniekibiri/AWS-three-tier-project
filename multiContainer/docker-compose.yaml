@@ -1,0 +1,26 @@
+version: '3.8'
+services: 
+    multicontainer-client:
+      container_name: client
+      build:
+        context: ./client
+        dockerfile: Dockerfile
+      volumes:
+        - './client:/usr/app'
+        - '/usr/app/node_modules'
+      ports:
+        - 3000:3000
+      environment:
+        - CHOKIDAR_USEPOLLING=true
+    multicontainer-server:
+      container_name: server
+      build:
+        context: ./server
+        dockerfile: Dockerfile
+      volumes:
+        - './server:/usr/app'
+        - '/usr/app/node_modules'
+      ports:
+        - 8000:8000
+      environment:
+        - CHOKIDAR_USEPOLLING=true
