@@ -14,7 +14,7 @@ function App() {
     //from aws loadbalancer
 
     const data = await fetch(
-      "http://internal-dev-shecodes-internal-lb-352653445.us-east-1.elb.amazonaws.com/users"
+      "http://dev-shecodes-external-lb-1840956510.us-east-1.elb.amazonaws.com/api/users"
     );
 
     const response = await data.json();

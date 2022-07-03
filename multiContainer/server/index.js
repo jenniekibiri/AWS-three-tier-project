@@ -16,7 +16,7 @@ connection.connect()
 connection.query(`use ${process.env.RDS_DB_NAME};`)
 
 
-app.get('/init', async (req, res) => {
+app.get('/addusers', async (req, res) => {
   connection.query('CREATE TABLE IF NOT EXISTS users (id INT(5) NOT NULL AUTO_INCREMENT PRIMARY KEY, lastname VARCHAR(40), firstname VARCHAR(40), email VARCHAR(30));');
   connection.query('INSERT INTO users (lastname, firstname, email) VALUES ( "Tony", "Sam", "tonysam@whatever.com"), ( "Doe", "John", "john.doe@whatever.com" );');
   res.send({ message: "init step done" })
